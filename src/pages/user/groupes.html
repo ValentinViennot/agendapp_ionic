@@ -1,0 +1,91 @@
+<!--
+    "l'Agenda Collaboratif"
+    Copyright (C)  2016  Valentin VIENNOT
+    Contact : vviennot@orange.fr
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    You have to put a copy of this program's license into your project.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif/edit/master/LICENSE
+-->
+<!--
+    "l'Agenda Collaboratif"
+    Copyright (C)  2016  Valentin VIENNOT
+    Contact : vviennot@orange.fr
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    You have to put a copy of this program's license into your project.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif/edit/master/LICENSE
+-->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons start>
+      <button ion-button icon-only color="secondary" (click)="help()">
+        <ion-icon name="help"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Groupes</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="dismiss()">
+        <span color="primary" showWhen="ios">Fermer</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+    <ion-list-header>
+      <span *ngFor="let g of pathGroups; let i=index" (click)="toGroup(i)">{{g.nom}} > </span>
+    </ion-list-header>
+    <!-- TODO loader if !groups -->
+    <ion-item *ngIf="!groups">
+      <ion-spinner name="bubbles"></ion-spinner>
+       Chargement en cours...
+    </ion-item>
+    <ion-item *ngFor="let g of groups" >
+      <ion-toggle [checked]="g.isUser" (ionChange)="g.isUser?quit(g):join(g)"></ion-toggle>
+      <ion-label (click)="g.type==1 ? push(g) : (g.isUser?presentColorPicker(g):refresh())">
+        {{g.nom}}
+      </ion-label>
+      <ion-icon (click)="g.type==1 ? push(g) : (g.isUser?presentColorPicker(g):refresh())" [name]="g.type==1 ? (g.isUser?'folder-open':'folder') : 'document'" item-left [style.color]="g.color?('#'+g.color):'#000'"></ion-icon>
+    </ion-item>
+    <ion-item-divider></ion-item-divider>
+    <ion-item (click)="toParent()" icon-left>
+      <ion-icon name="arrow-back"></ion-icon>
+       Précédent
+    </ion-item>
+    <!-- TODO icone aide + notif texte avec aide synthetisé -->
+  </ion-list>
+
+  <button ion-button full outline color="secondary" icon-left (click)="preCreateGroup(1)">
+    <ion-icon name="folder"></ion-icon>
+     Nouveau dossier
+  </button>
+  <button ion-button full outline color="secondary" icon-left (click)="preCreateGroup(2)">
+    <ion-icon name="document"></ion-icon>
+     Nouvelle matière
+  </button>
+
+</ion-content>

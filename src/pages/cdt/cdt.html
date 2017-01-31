@@ -1,0 +1,191 @@
+<!--
+    "l'Agenda Collaboratif"
+    Copyright (C)  2016  Valentin VIENNOT
+    Contact : vviennot@orange.fr
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    You have to put a copy of this program's license into your project.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif/edit/master/LICENSE
+-->
+<ion-header >
+  <ion-navbar color="primary">
+    <ion-title class="vertical-align-content">
+      <img style="margin-right:10px" width="30px" src="./assets/img/favicon.png" showWhen="android,windows" />
+      <span *ngIf="type!='archives'" class="titlefont">l'Agenda Collaboratif </span>
+      <span *ngIf="type=='archives'" class="titlefont">Archives </span>
+      <span id="linkparam" (click)="pageParam()">
+        <ion-icon name="build"></ion-icon>
+      </span>
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher (ionRefresh)="syncrefresher($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-grid class="vertical-align-content">
+    <ion-row>
+      <ion-col width-80>
+        <ion-searchbar
+          [(ngModel)]="filtre_texte"
+          (ionInput)="refresh()"
+          [placeholder]="'Rechercher...'"
+        >
+        </ion-searchbar>
+      </ion-col>
+      <ion-col width-20>
+        <button ion-button icon-only [color]="(filtre.length+filtre_texte.length)>0?'secondary':'divider'" (click)="clear_filtr()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col *ngFor="let flag of flags.slice().reverse()" (click)="filtr(':'+flag)" text-center>
+        <a>
+            <ion-icon name="flag" [style.color]="flag">
+            </ion-icon>
+            <span [style.color]="'black'">
+              ({{flags_count[flags.indexOf(flag)]}})
+            </span>
+        </a>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-item class="no-border">
+        <ion-checkbox [checked]="filtrdone" (click)="invertdone()" color="secondary">
+        </ion-checkbox>
+        <ion-label>Masquer les devoirs terminés</ion-label>
+      </ion-item>
+    </ion-row>
+  </ion-grid>
+  <ion-list>
+    <ion-item *ngIf="filtre.length>1" text-wrap color="secondary" (click)="clear_filtr()">
+      Filtres : {{filtre}} (Appuie pour réinitialiser)
+    </ion-item>
+    <ion-item *ngIf="!_sync.isOnline()" text-wrap color="danger">
+      Mode hors ligne. Les devoirs et les actions en attente seront synchronisés à la prochaine connexion.
+    </ion-item>
+    <!-- invitations -->
+    <ion-item class="invitation" *ngFor="let invitation of invitations">
+      <ion-grid class="vertical-align-content">
+        <ion-row>
+          <ion-col width-67>
+            <ion-item text-wrap no-border no-padding no-margin class="no-border">
+              <span style="color:#555">{{invitation.de}} vient de créer le groupe </span>{{invitation.groupe}}<span style="color:#555">. Souhaites-tu le rejoindre ?</span>
+            </ion-item>
+          </ion-col>
+          <ion-col width-33>
+            <button ion-button icon-only color="secondary" (click)="acceptInvitation(invitation)">
+              <ion-icon name="checkmark"></ion-icon>
+            </button>
+            <button ion-button icon-only color="danger" (click)="declineInvitation(invitation)">
+              <ion-icon name="close"></ion-icon>
+            </button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+    <!-- gestion du cas où il n'y a aucun devoir à afficher -->
+    <ion-item text-wrap *ngIf="sections.length==0">
+      <h3>Cette section est vide</h3>
+      <p>
+        Il n'y a aucun devoir à afficher pour le moment. <br>
+        Abonne toi à des matières depuis Paramètres > Gérer mes abonnements ou commence à ajouter des devoirs !
+      </p>
+    </ion-item>
+    <!-- sections de devoirs -->
+    <span *ngFor="let section of sections">
+      <ion-list-header class="sepmois" *ngIf="section.mois">
+        {{section.mois}}
+      </ion-list-header>
+      <ion-list-header (click)="filtr('='+section.date.toLocaleDateString())">
+        {{section.sous_titre}} {{section.titre}}
+      </ion-list-header>
+      <!-- devoirs de la section -->
+      <ion-item-sliding #item *ngFor="let devoir of section.devoirs; let i=index" [class.done]="devoir.fait">
+        <ion-item no-padding no-margin>
+          <ion-card>
+            <!-- informations d'en tête (matière, auteur, flag) -->
+            <div class="devoir-header" [style.background-color]="'#'+devoir.matiere_c">
+              <ion-item>
+                  <h2 (click)="filtr('#'+devoir.matiere)">
+                    #{{devoir.matiere | lowercase}}
+                  </h2>
+                  <p (click)="filtr('@'+devoir.auteur)">
+                    @{{devoir.auteur}}
+                  </p>
+                  <ion-avatar *ngIf="devoir.id" item-right (click)="setFlag(devoir)" class="flag">
+                    <ion-icon name="flag" [style.color]="flags[devoir.flag]"></ion-icon>
+                  </ion-avatar>
+              </ion-item>
+            </div>
+            <ion-card-content>
+              <!-- texte du devoir -->
+              <ion-item text-wrap text-justify>
+                <span [innerHTML]="devoir.texte"></span>
+              </ion-item>
+              <!-- pièces jointes attachées à ce devoir -->
+              <div class="files">
+                  <div *ngFor="let file of devoir.pjs" class="file">
+                      <a target="_blank" [href]="'http://agendapp.fr/apis/cdn/'+file.file" >
+                          <span class="name">{{file.title}}</span>
+                          <span class="auteur">(@{{file.auteur}})</span>
+                      </a>
+                      <a *ngIf="user.id==file.user" class="supprimer" (click)="supprFile(file)">
+                          <ion-icon ios="ios-trash" md="ios-trash"></ion-icon>
+                      </a>
+                  </div>
+              </div>
+            </ion-card-content>
+            <!-- statistiques du devoir -->
+            <ion-item *ngIf="devoir.id">
+              <span item-right (click)="presentComms(devoir)">
+                {{devoir.nb_fait}} <ion-icon name="checkmark"></ion-icon>
+                 /
+                {{devoir.commentaires.length}} <ion-icon name="chatbubbles"></ion-icon>
+              </span>
+            </ion-item>
+            <ion-item *ngIf="!devoir.id">
+              <span item-right>
+                <ion-icon name="sync"></ion-icon>
+                  En attente de synchronisation...
+              </span>
+            </ion-item>
+          </ion-card>
+        </ion-item>
+        <!-- Interactions avec le devoir -->
+        <ion-item-options *ngIf="devoir.id" side="left" (ionSwipe)="done(devoir)">
+          <button *ngIf="!devoir.fait" ion-button (click)="done(devoir)" color="valid">
+            <ion-icon name="checkmark"></ion-icon>
+            Terminé
+          </button>
+          <button *ngIf="devoir.fait" ion-button (click)="done(devoir)" color="primary">
+            <ion-icon name="close"></ion-icon>
+             À faire
+          </button>
+        </ion-item-options>
+        <ion-item-options *ngIf="devoir.id" side="right">
+          <button *ngIf="devoir.user==user.id" ion-button (click)="supprimer(devoir)" color="danger">
+            <ion-icon name="trash"></ion-icon>
+            Supprimer
+          </button>
+          <button *ngIf="devoir.user!=user.id" ion-button (click)="signaler(devoir)" color="danger">
+            <ion-icon name="alert"></ion-icon>
+            Signaler
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </span>
+  </ion-list>
+</ion-content>

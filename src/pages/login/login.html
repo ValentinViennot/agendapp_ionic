@@ -1,0 +1,60 @@
+<ion-header>
+</ion-header>
+
+<ion-content padding id="login">
+
+
+
+  <form [formGroup]="loginForm">
+    <ion-list>
+      <ion-item id="logo">
+        <img src="./assets/img/favicon.png" alt="LOGO">
+        <h1>Agendapp</h1>
+      </ion-item>
+      <!-- <div *ngIf="isActions()" class="ui-messages ui-widget ui-corner-all ui-messages-error" style="display:block">
+      <span class="ui-messages-icon fa fa-2x fa-info-circle"></span>
+      <ul>
+        <li (click)="clear()">
+          <span class="ui-messages-summary">Il reste des opérations en attente</span>
+          <span class="ui-messages-detail">Lors de ta reconnexion, les opérations vont être réalisées ({{isActions()}}). Pour annuler ces opérations, clique sur ce message avant de te connecter.</span>
+        </li>
+      </ul>
+    </div> -->
+
+      <ion-item text-wrap *ngIf="isActions()">
+        <ion-card color="danger" text-wrap>
+
+          <ion-card-header>
+            Il reste des opérations en attente
+          </ion-card-header>
+
+          <ion-card-content text-wrap>
+            Lors de ta reconnexion, ces opérations vont être réalisées : {{isActions()}}.
+          </ion-card-content>
+
+          <button ion-item (click)="clear()" color="danger">Annuler les opérations</button>
+
+        </ion-card>
+      </ion-item>
+
+      <ion-item >
+        <ion-label floating>Adresse mail</ion-label>
+        <ion-input formControlName="email" id="email" title="Adresse email" type="text" size="30"></ion-input>
+      </ion-item>
+
+      <ion-item >
+        <ion-label floating>Mot de passe</ion-label>
+        <ion-input formControlName="mdp" id="mdp" title="Mot de passe" type="password" size="30"></ion-input>
+      </ion-item>
+
+      <ion-item-divider></ion-item-divider>
+      <!--
+      <button pButton [disabled]="!ready()" type="text" (click)="login()" icon="fa-check" label="Connexion"></button>
+    <a id="inscription" class="ui-button secondaire" href="http://agendapp.fr/inscription/">Inscription</a>
+     -->
+    </ion-list>
+    <button ion-button [disabled]="!ready()" (click)="login()" full color="secondary">Connexion</button>
+    <button ion-button (click)="inscription()" full>Inscription</button>
+    <a id="mdpoublie" href="http://agendapp.fr/inscription/mdp/oublie/" target="_NEW">Mot de passe oublié</a>
+  </form>
+</ion-content>

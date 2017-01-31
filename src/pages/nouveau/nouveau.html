@@ -1,0 +1,80 @@
+<!--
+    "l'Agenda Collaboratif"
+    Copyright (C)  2016  Valentin VIENNOT
+    Contact : vviennot@orange.fr
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    You have to put a copy of this program's license into your project.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif/edit/master/LICENSE
+-->
+<ion-header>
+  <ion-navbar color="secondary">
+    <ion-title>
+      Ajouter un devoir
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-list>
+    <ion-item>
+      <ion-icon name="calendar" item-left></ion-icon>
+      Infos principales
+    </ion-item>
+    <ion-item text-wrap>
+      <ion-label>Matière</ion-label>
+      <ion-select [(ngModel)]="matiere" okText="Ok" cancelText="Annuler">
+        <ion-option *ngFor="let course of user.courses" [value]="getCourseValue(course)">
+          {{course.nom}} <span *ngIf="course.parent">({{course.parent}})</span>
+        </ion-option>
+      </ion-select>
+      <p>
+        Rappel : Tu peux créer, rejoindre et quitter des matières depuis la page "Paramètres" puis "Gérer mes abonnements"
+      </p>
+    </ion-item>
+    <ion-item>
+      <ion-label>À faire pour le...</ion-label>
+      <ion-datetime
+        displayFormat="DD/MM/YYYY"
+        pickerFormat="DD MMM YYYY"
+        monthShortNames="jan,fev,mar,avr,mai,jun,jul,aoû,sep,oct,nov,dec"
+        cancelText="Annuler"
+        doneText="Valider"
+        [(ngModel)]="date"
+        [min]="_date.today.toISOString()"
+        [max]="(_date.today.getFullYear()+2)+''"
+      ></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="paper" item-left></ion-icon>
+      Description (précise)
+    </ion-item>
+    <ion-item>
+      <ion-textarea
+        placeholder="Numéro d'exercice et de page, devoir à rendre ou non, toute information concernant le devoir..."
+        [(ngModel)]="texte"
+        rows="6"
+        autocorrect="true"
+      ></ion-textarea>
+    </ion-item>
+
+  </ion-list>
+
+  <div padding>
+    <button (click)="save()" ion-button color="primary" block>Ajouter</button>
+  </div>
+
+</ion-content>
+

@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-navbar color="secondary">
+    <ion-title>
+      Paramètres
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding><form [formGroup]="userForm" id="userForm">
+  <button ion-button full color="secondary" icon-left (click)="presentGroupes()">
+    <ion-icon name="school"></ion-icon>
+    Gérer mes abonnements
+  </button>
+  <br>
+  <ion-list>
+    <ion-item>
+      <ion-icon name="person" item-left></ion-icon>
+      <ion-input type="text" [disabled]="!user.fake_identity" formControlName="prenom" title="Prénom" size="30" placeholder="Prénom"></ion-input>
+      <ion-input type="text" [disabled]="!user.fake_identity" formControlName="nom" title="Nom" size="30" placeholder="Nom"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="mail" item-left></ion-icon>
+      <ion-label stacked>Adresse mail</ion-label>
+      <ion-input title="Email" type="text" size="70" formControlName="email"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-item>
+      <ion-icon name="notifications" item-left></ion-icon>
+      Notifications
+    </ion-item>
+    <ion-item>
+      <ion-label> Notifications par mail</ion-label>
+      <ion-toggle color="secondary" formControlName="mail"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label> À l'ajout d'un devoir</ion-label>
+      <ion-toggle color="secondary" disabled checked="false"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Heure de rappel des devoirs non faits pour le lendemain</ion-label>
+      <ion-select formControlName="notifs" cancelText="Annuler" okText="Ok !">
+        <ion-option [value]="-1">NON</ion-option>
+        <ion-option *ngFor="let hour of hours" [value]="hour">
+          {{hour}}h
+        </ion-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-item>
+      <ion-icon name="lock" item-left></ion-icon>
+      Changer mon mot de passe
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Nouveau mot de passe</ion-label>
+      <ion-input type="password" formControlName="mdp1"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Confirmation</ion-label>
+      <ion-input type="password" formControlName="mdp2"></ion-input>
+    </ion-item>
+  </ion-list>
+  <button ion-button full color="primary" (click)="save()">
+    Enregistrer
+  </button>
+
+  <ion-item-divider></ion-item-divider>
+
+  <button ion-button full color="danger" icon-right (click)="_sync.logout(false)">
+    Déconnexion  <ion-icon name="exit"></ion-icon>
+  </button>
+
+  <button ion-button full color="white" icon-right (click)="_sync.logout(true)">
+    Fermer toutes mes sessions
+  </button>
+
+</form></ion-content>

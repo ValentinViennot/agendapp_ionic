@@ -1,0 +1,13 @@
+{
+  "name": "AGENDAPP - l'Agenda Collaboratif",
+  "short_name": "Agendapp",
+  "start_url": "index.html",
+  "display": "standalone",
+  "icons": [{
+    "src": "assets/img/favicon.png",
+    "sizes": "500x500",
+    "type": "image/png"
+  }],
+  "background_color": "#D32F2F",
+  "theme_color": "#D32F2F"
+}

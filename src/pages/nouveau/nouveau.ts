@@ -52,20 +52,23 @@ import {DateService} from "../../services/date.service";
      this.init();
    }
 
-   ngOnInit():void {
-     let th:any = this;
-     this._sync.syncUser().then(
-       result => this.user = this._parse.parse("user"),
-       function (erreur:string) {
-         if (window.localStorage.getItem("user"))
-           th.user = th._parse.parse("user");
-         else
-           th._notif.add(
-             2, 'Problème de synchronisation',
-             'Impossible de récupérer les données (' + erreur + ')');
-       }
-     );
-   }
+    ionViewDidEnter():void {
+      let th:any = this;
+      this._sync.syncUser().then(
+        result => function() {
+          th.user = th._parse.parse("user");
+          console.log("User actualisé");
+        },
+        function (erreur:string) {
+          if (window.localStorage.getItem("user"))
+            th.user = th._parse.parse("user");
+          else
+            th._notif.add(
+              2, 'Problème de synchronisation',
+              'Impossible de récupérer les données (' + erreur + ')');
+        }
+      );
+    }
 
    private init():void {
      this.date = this._date.today.toISOString();
@@ -98,7 +101,7 @@ import {DateService} from "../../services/date.service";
        devoir.user = matiere.id;
        devoir.fait = false;
        devoir.nb_fait = 0;
-       devoir.auteur = "moi";
+       devoir.auteur = this.user.prenom+this.user.nom;
        devoir.flag = 0;
        devoir.date = new Date(this.date);
        //devoir.date.setFullYear(+(this.date.substr(6,4)),(+this.date.substr(3,2)-1),+this.date.substr(0,2));

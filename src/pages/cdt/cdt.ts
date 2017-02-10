@@ -137,9 +137,9 @@ export class CdtPage {
     // Récupère le token d'identification (nécessaire)
     this.token = window.localStorage.getItem("token");
     // Récupère le filtre devoirs marqués comme faits ou non
-    if (!window.localStorage.getItem("filtrdone"))
-      window.localStorage.setItem("filtrdone", JSON.stringify(false));
-    this.filtrdone = JSON.parse(window.localStorage.getItem("filtrdone"));
+    if (!window.localStorage.getItem("fd"+this.type))
+      window.localStorage.setItem("fd"+this.type, JSON.stringify(false));
+    this.filtrdone = JSON.parse(window.localStorage.getItem("fd"+this.type));
     // Récupère l'utilisateur actuel depuis le localStorage
     this.user = this._parse.parse("user");
     // Vérification de l'intégrité des pending list
@@ -344,7 +344,7 @@ export class CdtPage {
     }
     // Filtre complet établi
     if (filtre_full.length<2) {
-      this.selectedFiltres = [];
+      this.selectedFiltres=[];
       return devoirs;
     }
     else {
@@ -385,9 +385,6 @@ export class CdtPage {
                 if (retourTEMP.indexOf(devoirs[k]) < 0) {
                   retourTEMP.push(devoirs[k]);
                 }
-                // Pour parfaire l'affichage, on met à jour les filtres appliqués
-                if (type == "#" && this.selectedFiltres.indexOf(filtresOU[j]) < 0)
-                  this.selectedFiltres.push(filtresOU[j]);
               }
             }
           }
@@ -435,7 +432,7 @@ export class CdtPage {
   }
   public invertdone():void {
     this.filtrdone=!this.filtrdone;
-    window.localStorage.setItem("filtrdone",JSON.stringify(this.filtrdone));
+    window.localStorage.setItem("fd"+this.type,JSON.stringify(this.filtrdone));
     this.refresh();
   }
 
@@ -672,5 +669,4 @@ export class CdtPage {
     else
       this._notif.add(2,"Hors connexion","Une connexion à Internet est nécessaire pour modifier les paramètres");
   }
-
 }

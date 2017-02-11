@@ -71,7 +71,7 @@
   </ion-grid>
   <ion-list>
     <ion-item *ngIf="filtre.length>1" text-wrap color="secondary" (click)="clear_filtr()">
-      Filtres : {{filtre}} (Appuie pour réinitialiser)
+      Filtre : {{filtre}} (Appuie pour réinitialiser)
     </ion-item>
     <ion-item *ngIf="!_sync.isOnline()" text-wrap color="danger">
       Mode hors ligne. Les devoirs et les actions en attente seront synchronisés à la prochaine connexion.

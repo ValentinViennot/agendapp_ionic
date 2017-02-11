@@ -351,6 +351,9 @@ export class CdtPage {
       console.log("FILTREDEVOIRS : "+filtre_full); // DEBUG
       // Devoirs renvoyés
       let retour:Devoir[] = [];
+      /*
+      Méthode 1 : Filtrer par condition
+
       // On récupère les conditions "ET"
       let filtresET:string[] = filtre_full.trim().split("&&");
       // Trouve le premier tableau non vide
@@ -414,6 +417,54 @@ export class CdtPage {
         } else if (nonvide>0) {
           retour = [];
         }
+      }
+      */
+      /*
+      Méthode 2 : Filtrer par devoir puis par condition
+      */
+      // Etablit la liste des conditions
+      let filtres:string[][] = [];
+      let filtresET:string[] = filtre_full.trim().split("&&");
+      for(let i:number = 0, ib:number= 0;i<filtresET.length;++i) {
+        if (filtresET[i]!=null&&filtresET[i].length>1) {
+          filtres[ib] = [];
+          let filtresOU: string[] = filtresET[i].trim().split("||");
+          for(let j:number=0;j<filtresOU.length;++j) {
+            if (filtresOU[j]!=null&&filtresOU[j].length>1) {
+              filtres[ib].push(filtresOU[j]);
+            }
+          }
+          ib++;
+        }
+      }
+      filtresET=null;
+      // Pour chaque devoir, on vérifie s'il vérifie au moins une condition OU de chaque bloc ET
+      for (let k:number = 0; k<devoirs.length; ++k) {
+        let sv: boolean = true; // "still validated" par défaut, il répond aux conditions jusqu'à preuve du contraire
+        // Pour chaque bloc ET
+        for (let i: number = 0; i < filtres.length && sv; ++i) {
+          let bnv: boolean = true; // "bloc not validated" par défaut il faut prouver au moins une condition du bloc
+          for (let j: number = 0; j < filtres[i].length && bnv; ++j) {
+            // Le premier charactère de la condition de filtrage définit le type de filtrage
+            let t: string = filtres[i][j].substr(0, 1);
+            // Le reste de la chaine correspond au critère de filtrage
+            let s: string = filtres[i][j].substr(1);
+            if (
+              ( t == "@" && devoirs[k].auteur.toLowerCase().match("^" + s.toLowerCase()) ) ||
+              ( t == "#" && devoirs[k].matiere.toLowerCase().match("^" + s.toLowerCase()) ) ||
+              ( t == "=" && devoirs[k].date.toLocaleDateString() == s ) ||
+              ( t == ":" && devoirs[k].flag == this.flags.indexOf(s) ) ||
+              ( t == "-" && devoirs[k].fait == (parseInt(s) == 1) ) ||
+              ( devoirs[k].texte.toLowerCase().match(filtres[i][j].toLowerCase()) )
+            ) {
+              // Le devoir répond à la condition
+              // Le bloc est donc validé
+              bnv = false;
+            }
+          }
+          if (bnv) sv=false;
+        }
+        if (sv) retour.push(devoirs[k]);
       }
       return retour;
     }

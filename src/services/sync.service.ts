@@ -87,7 +87,7 @@ export class SyncService {
                 this.urls[i]+="&token="+token;
     }
     private initUrls():void {
-        let base:string = "http://apis.agendapp.fr";
+        let base:string = "https://apis.agendapp.fr";
         this.urls = [];
         this.urls.push(base+"/logout/"); // 0 logout
         this.urls.push(base+"/user/"); // 1 user

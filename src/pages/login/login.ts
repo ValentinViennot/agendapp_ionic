@@ -175,6 +175,6 @@ export class LoginPage {
   }
 
   inscription():void {
-    window.location.href="http://agendapp.fr/inscription/";
+    window.location.href="https://agendapp.fr/inscription/";
   }
 }

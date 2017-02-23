@@ -45,16 +45,19 @@
     </ion-item>
     <ion-item>
       <ion-label>À faire pour le...</ion-label>
-      <ion-datetime
-        displayFormat="DD/MM/YYYY"
-        pickerFormat="DD MMM YYYY"
-        monthShortNames="jan,fev,mar,avr,mai,jun,jul,aoû,sep,oct,nov,dec"
-        cancelText="Annuler"
-        doneText="Valider"
-        [(ngModel)]="date"
-        [min]="_date.today.toISOString()"
-        [max]="(_date.today.getFullYear()+2)+''"
-      ></ion-datetime>
+      <ion-datetime displayFormat="DDDD D MMMM"
+                    pickerFormat="DDDD D MM YYYY"
+                    monthNames="Janvier, Fevrier, Mars, Avril, Mai, Juin, Juillet, Aout, Septembre, Octobre, Novembre, Decembre"
+                    monthShortNames="jan, fev, mar, avr, mai, jun, jul, aout, sep, oct, nov, dec"
+                    dayNames="Lundi, Mardi, Mercredi, Jeudi, Vendredi, Samedi, Dimanche"
+                    dayShortNames="lun, mar, mer, jeu, ven, sam, dim"
+                    cancelText="Annuler"
+                    doneText="Valider"
+                    [(ngModel)]="date"
+                    [min]="_date.today.toISOString()"
+                    [max]="(_date.today.getFullYear()+2)+''"
+      >
+      </ion-datetime>
     </ion-item>
 
     <ion-item>

@@ -3,8 +3,6 @@
 
 <ion-content padding id="login">
 
-
-
   <form [formGroup]="loginForm">
     <ion-list>
       <ion-item id="logo">
@@ -48,10 +46,6 @@
       </ion-item>
 
       <ion-item-divider></ion-item-divider>
-      <!--
-      <button pButton [disabled]="!ready()" type="text" (click)="login()" icon="fa-check" label="Connexion"></button>
-    <a id="inscription" class="ui-button secondaire" href="http://agendapp.fr/inscription/">Inscription</a>
-     -->
     </ion-list>
     <button ion-button [disabled]="!ready()" (click)="login()" full color="secondary">Connexion</button>
     <button ion-button (click)="inscription()" full>Inscription</button>

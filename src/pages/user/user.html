@@ -31,6 +31,10 @@
       Notifications
     </ion-item>
     <ion-item>
+      <ion-label> Notifications push</ion-label>
+      <ion-toggle (ionChange)="setPush()" formControlName="push" color="secondary"></ion-toggle>
+    </ion-item>
+    <ion-item>
       <ion-label> Notifications par mail</ion-label>
       <ion-toggle color="secondary" formControlName="mail"></ion-toggle>
     </ion-item>

@@ -1,4 +1,3 @@
-
 /*
  "l'Agenda Collaboratif"
  Copyright (C)  2016  Valentin VIENNOT
@@ -19,6 +18,7 @@
  FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif/edit/master/LICENSE
  */
 import {Devoir} from "./devoir";
+
 /**
  * Created by Valentin on 15/07/2016.
  */

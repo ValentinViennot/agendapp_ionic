@@ -1,4 +1,3 @@
-
 /*
  "l'Agenda Collaboratif"
  Copyright (C)  2016  Valentin VIENNOT
@@ -21,7 +20,6 @@
 /**
  * Created by Valentin on 16/07/2016.
  */
-
 import {Injectable} from "@angular/core";
 
 
@@ -63,7 +61,7 @@ export class DateService {
     }
 
     public getDayTiny(date:Date):string {
-        return `${this.getDay(date).substr(0, 3)}.`; // TODO
+        return `${this.getDay(date).substr(0, 3)}.`;
     }
 
     public recentDateTime(date:Date):string {

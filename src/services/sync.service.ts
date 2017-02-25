@@ -106,8 +106,8 @@ export class SyncService {
             .toPromise()
             .then(
                 function () {
-                    window.localStorage.clear();
                     Splashscreen.show();
+                    window.localStorage.clear();
                     window.location.reload();
                 }
             )

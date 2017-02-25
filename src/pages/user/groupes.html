@@ -59,7 +59,6 @@
     <ion-list-header>
       <span *ngFor="let g of pathGroups; let i=index" (click)="toGroup(i)">{{g.nom}} > </span>
     </ion-list-header>
-    <!-- TODO loader if !groups -->
     <ion-item *ngIf="!groups">
       <ion-spinner name="bubbles"></ion-spinner>
        Chargement en cours...
@@ -76,7 +75,6 @@
       <ion-icon name="arrow-back"></ion-icon>
        Précédent
     </ion-item>
-    <!-- TODO icone aide + notif texte avec aide synthetisé -->
   </ion-list>
 
   <button ion-button full outline color="secondary" icon-left (click)="preCreateGroup(1)">

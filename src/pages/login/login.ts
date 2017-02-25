@@ -70,9 +70,14 @@ export class LoginPage {
   }
 
   public login():void {
+    this._notif.add(0,'Connexion en cours...','');
     if (this.loginForm.value.email.match(this.regexp)) {
       if (this.loginForm.value.mdp.length>3) {
-        this._sync.getToken(this.loginForm.value).then(
+        let infos = {
+          "email":this.loginForm.value.email,
+          "mdp":this.loginForm.value.mdp
+        };
+        this._sync.getToken(infos).then(
           response => this.token(response),
           erreur => this._notif.add(2,'Erreur',erreur)
         );
@@ -87,7 +92,6 @@ export class LoginPage {
   private token(response:any):void {
     let th:any = this;
     if (response.token) {
-      this._notif.add(0,'Connexion en cours...','');
       // Et on l'applique aux urls des apis
       this._sync.login(response.token);
       // On initialise les variables stockant les devoirs

@@ -24,7 +24,7 @@ import {User} from "../../concepts/user";
 import {NotificationService} from "../../services/notification.service";
 import {SyncService} from "../../services/sync.service";
 import {GroupesModal} from "./groupes";
-import {ModalController} from "ionic-angular";
+import {ModalController, Platform} from "ionic-angular";
 
 @Component({
   selector: 'page-user',
@@ -43,6 +43,9 @@ export class UserPage {
     changed:boolean;
     userForm:FormGroup;
 
+    push_value:string;
+    push:boolean;
+
     hours:number[]; // heures de rappel
 
     constructor(
@@ -50,7 +53,8 @@ export class UserPage {
         public _sync: SyncService,
         private _parse: ParseService,
         public formBuilder: FormBuilder,
-        public modalCtrl: ModalController
+        public modalCtrl: ModalController,
+        public platform: Platform
     ) {
         this.hours = Array.from(Array(24).keys());
         this.user = this._parse.parse("user");
@@ -68,23 +72,24 @@ export class UserPage {
     }
 
     private init(sync:boolean):void {
-        if (sync) this._notif.add(0,'Modifications enregistrées','');
-        else console.log("init user");
-        let th:any = this;
-        this.changed=false;
-        this._sync.syncUser().then(
-            value => this.initForm(),
-            erreur => th._notif.add(
-                2, 'Problème de synchronisation',
-                'Impossible de récupérer les données (' + erreur + ')')
-        );
+      if (sync) this._notif.add(0,'Modifications enregistrées','');
+      else console.log("init user");
+      let th:any = this;
+      this.changed=false;
+      //this.push=this.getPush();
+      this.push_value=this._notif.getPushToken();
+      this.push=this.push_value!=null;
+      this._sync.syncUser().then(
+          value => this.initForm(),
+          erreur => th._notif.add(
+              2, 'Problème de synchronisation',
+              'Impossible de récupérer les données (' + erreur + ')')
+      );
     }
 
     private initForm():void {
       this.user = this._parse.parse("user");
       this.userForm = this.formBuilder.group({
-        //'prenom': new FormControl({value: this.user.prenom, disabled: !this.user.fake_identity}, Validators.required),
-        //'nom': new FormControl({value: this.user.nom, disabled: !this.user.fake_identity}, Validators.required),
         'prenom': new FormControl(this.user.prenom, Validators.required),
         'nom': new FormControl(this.user.nom, Validators.required),
         'email': new FormControl(this.user.email, [Validators.required, Validators.pattern("([a-zA-Z0-9_.]{1}[a-zA-Z0-9_.]*)((@[a-zA-Z]{2}[a-zA-Z]*)[\\\.]([a-zA-Z]{2}|[a-zA-Z]{3}))")]),
@@ -92,7 +97,8 @@ export class UserPage {
         'mdp2': new FormControl('', [Validators.required, Validators.minLength(6)]),
         'mail': new FormControl(this.user.mail),
         'notifs': new FormControl(this.user.notifs),
-        'rappels': new FormControl(this.user.rappels)
+        'rappels': new FormControl(this.user.rappels),
+        'push': new FormControl(this.push)
       });
       this.userForm.valueChanges
         .subscribe(form => this.changed=true);
@@ -100,22 +106,41 @@ export class UserPage {
 
     public save():void {
         if (this.userForm.value.mdp1==this.userForm.value.mdp2) {
-            this._sync.saveUser(this.userForm.value).then(
-                result => this.init(true),
-                erreur => this._notif.add(2,'Erreur',erreur)
-            );
+          this.userForm.value.push=this.push_value; // TODO MAJ APi to handle push and CRON (lié à token + cascade)
+          this._sync.saveUser(this.userForm.value).then(
+              result => this.init(true),
+              erreur => this._notif.add(2,'Erreur',erreur)
+          );
         } else {
             this._notif.add(1,'Les mots de passe ne correspondent pas','');
         }
     }
 
     public presentGroupes():void {
-      let commModal = this.modalCtrl.create(GroupesModal);
-      /*
-      commModal.onDidDismiss(() => {
-        this.save();
-      });
-      */
-      commModal.present();
+      let th:any = this;
+      let groupesModal = this.modalCtrl.create(GroupesModal);
+      groupesModal.present()
+        .then(()=>{console.log("Navigation vers les groupes");})
+        .catch(erreur=>{
+          console.log(erreur);
+          th._notif.add(2,"Erreur","Impossible de naviguer dans les groupes pour le moment. Essaie de fermer puis de réouvrir l'applicatin.");
+        });
+    }
+
+    public setPush():void {
+      // ne pas prendre en compte l'initialisation auto
+      if (this.changed) {
+        // Gérer les cas différemments
+        console.log("Trying to set Push");
+        if (!this.push) this._notif.add(1,"Notifications Push","Le choix effectué ici n'est valable que pour cette session. Si tu déconnectes ton compte de l'application, il te faudra revenir ici. Par défaut les notifications push sont désactivées.");
+        else this._notif.add(0,"Désactivation des notifications push...","");
+        let th:any=this;
+        this._notif.registerPush().then(
+          () => {
+            th._notif.initPush();
+            th.init();
+          }
+        );
+      }
     }
 }

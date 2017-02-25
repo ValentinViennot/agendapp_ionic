@@ -710,7 +710,6 @@ export class CdtPage {
   }
 
   pageParam():void {
-    // TODO Page paramètres
     this._sync.checkConnection();
     if (this._sync.isOnline())
       this.navCtrl.push(UserPage).then(

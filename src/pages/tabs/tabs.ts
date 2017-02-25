@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from "@angular/core";
 import {CdtPage} from "../cdt/cdt";
 import {NouveauPage} from "../nouveau/nouveau";
 
@@ -13,9 +13,6 @@ export class TabsPage {
     type: "archives"
   };
   tab2Root:any = NouveauPage;
-  /*tab2Root: any = AboutPage;
-  tab3Root: any = ContactPage;*/
-
   constructor() {
 
   }

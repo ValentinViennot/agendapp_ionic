@@ -4,7 +4,6 @@ import {StatusBar, Splashscreen} from "ionic-native";
 import {TabsPage} from "../pages/tabs/tabs";
 import {LoginPage} from "../pages/login/login";
 import {SyncService} from "../services/sync.service";
-import {Deploy} from "@ionic/cloud-angular";
 import {NotificationService} from "../services/notification.service";
 
 
@@ -18,8 +17,7 @@ export class MyApp {
   constructor(
     platform: Platform,
     _sync: SyncService,
-    _notif: NotificationService,
-    deploy: Deploy
+    _notif: NotificationService
   ) {
     platform.ready().then(() => {
       if (!window.localStorage.getItem("token") || !window.localStorage.getItem("user"))
@@ -31,28 +29,32 @@ export class MyApp {
       if (platform.is('cordova')) {
         StatusBar.styleDefault();
         Splashscreen.hide();
+        /*
+        TODO réactiver après résolution du bug avec deploy et production...(penser à inclure deploy:Deploy dans le constructeur)
+        //deploy.channel = "dev";
         deploy.channel = "production";
         deploy.check().then((snapshotAvailable: boolean) => {
           if (snapshotAvailable) {
             deploy.download().then(() => {
               deploy.extract().then(
-                on=>{
+                ()=>{
                   _notif.add(0,"Application mise à jour !","Les changements seront visibles au prochain lancement");
                 }
               );
             });
           }
-          /*deploy.getSnapshots().then((snapshots) => {
+          deploy.getSnapshots().then((snapshots) => {
            snapshots.forEach(function(snapshot){
              switch (snapshot) {
-              // TODO delete old snapshot (case 'uuid': deploy.deleteSnapshot(snapshot))
+               /!*case '3147de5c-fb72-11e6-b510-6e0c68722e02':
+                 deploy.deleteSnapshot(snapshot).then(()=>console.log(snapshot+" snapshot deleted."));
+                 break;*!/
              }
-             });
-           });*/
-        });
-
+           });
+          });
+        });*/
       } else {
-        console.warn("Deploy not initialized. Cordova is not available - Run in physical device");
+        console.warn("Cordova is not available.");
       }
       // Initialisation du service d'envoi de notifications push
       _notif.initPush();

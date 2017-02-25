@@ -76,9 +76,12 @@ export class UserPage {
       else console.log("init user");
       let th:any = this;
       this.changed=false;
-      //this.push=this.getPush();
-      this.push_value=this._notif.getPushToken();
-      this.push=this.push_value!=null;
+      this._notif.getPushToken().then(
+        (token)=> {
+          this.push_value=token;
+          this.push=this.push_value!=null;
+        }
+      );
       this._sync.syncUser().then(
           value => this.initForm(),
           erreur => th._notif.add(

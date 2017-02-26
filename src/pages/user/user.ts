@@ -24,7 +24,8 @@ import {User} from "../../concepts/user";
 import {NotificationService} from "../../services/notification.service";
 import {SyncService} from "../../services/sync.service";
 import {GroupesModal} from "./groupes";
-import {ModalController, Platform} from "ionic-angular";
+import {ModalController} from "ionic-angular";
+import {PushService} from "../../services/push.service";
 
 @Component({
   selector: 'page-user',
@@ -49,12 +50,12 @@ export class UserPage {
     hours:number[]; // heures de rappel
 
     constructor(
-        private _notif: NotificationService,
+        public _notif: NotificationService,
         public _sync: SyncService,
+        public _push: PushService,
         private _parse: ParseService,
-        public formBuilder: FormBuilder,
-        public modalCtrl: ModalController,
-        public platform: Platform
+        private formBuilder: FormBuilder,
+        public modalCtrl: ModalController
     ) {
         this.hours = Array.from(Array(24).keys());
         this.user = this._parse.parse("user");
@@ -71,26 +72,30 @@ export class UserPage {
       this.save();
     }
 
+    /**
+     * Initialisation du formulaire à partir des données utilisateur distantes
+     * @param sync L'initialisation intervient elle après un enregistrement des données ?
+     */
     private init(sync:boolean):void {
       if (sync) this._notif.add(0,'Modifications enregistrées','');
       else console.log("init user");
-      let th:any = this;
-      this.changed=false;
-      this._notif.getPushToken().then(
-        (token)=> {
-          this.push_value=token;
-          this.push=this.push_value!=null;
-        }
-      );
       this._sync.syncUser().then(
           value => this.initForm(),
-          erreur => th._notif.add(
+          erreur => this._notif.add(
               2, 'Problème de synchronisation',
               'Impossible de récupérer les données (' + erreur + ')')
       );
     }
 
+    /**
+     * Initialisation du formulaire à partir des données utilisateur locales
+     */
     private initForm():void {
+      this.changed=false;
+      this.push=this._push.isActivated();
+      this._push.getPushToken().then(
+        (token)=>this.push_value=token
+      );
       this.user = this._parse.parse("user");
       this.userForm = this.formBuilder.group({
         'prenom': new FormControl(this.user.prenom, Validators.required),
@@ -109,8 +114,9 @@ export class UserPage {
 
     public save():void {
         if (this.userForm.value.mdp1==this.userForm.value.mdp2) {
-          this.userForm.value.push=this.push_value; // TODO MAJ APi to handle push and CRON (lié à token + cascade)
-          this._sync.saveUser(this.userForm.value).then(
+          let infos:any = this.userForm.value;
+          infos.push=this.push_value; // TODO MAJ APi to handle push and CRON (lié à token + cascade)
+          this._sync.saveUser(infos).then(
               result => this.init(true),
               erreur => this._notif.add(2,'Erreur',erreur)
           );
@@ -120,29 +126,25 @@ export class UserPage {
     }
 
     public presentGroupes():void {
-      let th:any = this;
       let groupesModal = this.modalCtrl.create(GroupesModal);
       groupesModal.present()
         .then(()=>{console.log("Navigation vers les groupes");})
         .catch(erreur=>{
           console.log(erreur);
-          th._notif.add(2,"Erreur","Impossible de naviguer dans les groupes pour le moment. Essaie de fermer puis de réouvrir l'applicatin.");
+          this._notif.add(2,"Erreur","Impossible de naviguer dans les groupes pour le moment. Essaie de fermer puis de réouvrir l'applicatin.");
         });
     }
 
     public setPush():void {
       // ne pas prendre en compte l'initialisation auto
       if (this.changed) {
-        // Gérer les cas différemments
         console.log("Trying to set Push");
-        if (!this.push) this._notif.add(1,"Notifications Push","Le choix effectué ici n'est valable que pour cette session. Si tu déconnectes ton compte de l'application, il te faudra revenir ici. Par défaut les notifications push sont désactivées.");
+        if (!this.push) this._notif.add(1,"Notifications Push","Le choix effectué n'est valable que pour cette session, sur cet appareil.");
         else this._notif.add(0,"Désactivation des notifications push...","");
-        let th:any=this;
-        this._notif.registerPush().then(
-          () => {
-            th._notif.initPush();
-            th.init();
-          }
+        this._push.registerPush().then(
+          () => this.init(false)
+        ).catch(
+          (erreur)=>this._notif.add(2,"Erreur",erreur)
         );
       }
     }

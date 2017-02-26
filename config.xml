@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.agendappBETA" version="3.0.0-BETA.1" xmlns="http://www.w3.org/ns/widgets">
+<widget id="fr.agendapp.ionic" version="3.0.0-RC.1" xmlns="http://www.w3.org/ns/widgets">
   <name>Agendapp</name>
   <description>l'Agenda Collaboratif</description>
   <author email="vviennot@orange.fr" href="http://agendapp.fr/">Valentin VIENNOT</author>

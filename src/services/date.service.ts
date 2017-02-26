@@ -33,7 +33,7 @@ export class DateService {
     }
 
     public getDay(date:Date):string {
-        var day:string = "ERREUR";
+        let day:string = "ERREUR";
         switch (date.getDay()) {
             case 0:
                 day="Dimanche";

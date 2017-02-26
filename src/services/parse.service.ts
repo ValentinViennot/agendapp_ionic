@@ -31,16 +31,16 @@ export class ParseService {
     }
 
     private dateParser (key, value) {
-        var reISO:RegExp = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
-        var reMsAjax:RegExp = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+        let reISO:RegExp = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+        let reMsAjax:RegExp = /^\/Date\((d|-|.*)\)[\/|\\]$/;
         if (typeof value === 'string') {
-            var a = reISO.exec(value);
+            let a = reISO.exec(value);
             if (a) {
                 return new Date(value);
             }
             a = reMsAjax.exec(value);
             if (a) {
-                var b = a[1].split(/[-+,.]/);
+                let b = a[1].split(/[-+,.]/);
                 return new Date(b[0] ? +b[0] : 0 - +b[1]);
 
             }

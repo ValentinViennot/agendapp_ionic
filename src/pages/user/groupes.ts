@@ -163,7 +163,7 @@ export class GroupesModal {
       buttons: [
         {
           text: 'Annuler',
-          handler: data => {
+          handler: () => {
             console.log("Création de groupe annulée");
           }
         },

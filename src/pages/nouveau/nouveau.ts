@@ -53,17 +53,17 @@ import {DateService} from "../../services/date.service";
    }
 
     ionViewDidEnter():void {
-      let th:any = this;
+     console.log("**debug");
       this._sync.syncUser().then(
-        result => function() {
-          th.user = th._parse.parse("user");
-          console.log("User actualisé");
-        },
-        function (erreur:string) {
-          if (window.localStorage.getItem("user"))
-            th.user = th._parse.parse("user");
-          else
-            th._notif.add(
+        ()=>{
+          this.user=this._parse.parse("user");
+          console.log("Profil utilisateur actualisé.");
+        }
+      ).catch(
+        (erreur:string)=>{
+          console.log("Impossible d'actualiser l'utilisateur ("+erreur+")");
+          if(!window.localStorage.getItem("user"))
+            this._notif.add(
               2, 'Problème de synchronisation',
               'Impossible de récupérer les données (' + erreur + ')');
         }

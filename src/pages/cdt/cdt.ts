@@ -33,6 +33,7 @@ import {SelectItem} from "../../concepts/selectitem";
 import {PJ} from "../../concepts/PJ";
 import {CommModal} from "./comm";
 import {UserPage} from "../user/user";
+import {PushService} from "../../services/push.service";
 
 @Component({
  selector: 'page-cdt',
@@ -88,6 +89,7 @@ export class CdtPage {
     public params: NavParams,
     public  _sync: SyncService,
     public _notif: NotificationService,
+    public _push: PushService,
     public _date: DateService,
     public _parse: ParseService,
     public alertCtrl: AlertController,
@@ -164,6 +166,14 @@ export class CdtPage {
         },
         erreur => console.log(erreur)
       );
+    // Envoi le token push au serveur pour une éventuelle actualisation
+    this._push.getPushToken().then(
+      (token)=>
+        this._sync.saveUser({
+          "push":token
+        }).then(()=>console.log("Token push envoyé au serveur"))
+          .catch((err)=>console.log(err))
+    ).catch((err)=>console.log(err));
   }
 
   ionViewDidEnter():void {

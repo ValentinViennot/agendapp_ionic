@@ -11,19 +11,9 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#D32F2F">
 
-  <!-- START TODO disable for web app -->
-<!--
-  &lt;!&ndash; cordova.js &ndash;&gt;
+  <!-- cordova.js TODO comment for web app -->
   <script src="cordova.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('service worker installed'))
-        .catch(err => console.log('Error', err));
-    }
-  </script>
-  -->
-  <!-- END disable for web app -->
+  <!-- TODO cut firebase-messaging-sw.js from assets to www root after build process for web app -->
 
   <link href="assets/fonts/googlefonts.css" rel="stylesheet" >
   <link href="build/main.css" rel="stylesheet">

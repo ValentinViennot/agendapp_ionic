@@ -1,5 +1,5 @@
 import {NgModule} from "@angular/core";
-import {IonicApp, IonicModule} from "ionic-angular";
+import {IonicApp, IonicModule, Platform} from "ionic-angular";
 import {MyApp} from "./app.component";
 import {CdtPage} from "../pages/cdt/cdt";
 import {TabsPage} from "../pages/tabs/tabs";
@@ -11,7 +11,10 @@ import {LoginPage} from "../pages/login/login";
 import {GroupesModal} from "../pages/user/groupes";
 import {SyncService} from "../services/sync.service";
 import {ColorModal} from "../pages/user/colorpicker";
-import {CloudSettings, CloudModule} from "@ionic/cloud-angular";
+import {CloudSettings, CloudModule, Push} from "@ionic/cloud-angular";
+import {PushService} from "../services/push.service";
+import {AppPushService} from "../services/push-app.service";
+import {WebPushService} from "../services/push-web.service";
 
 const cloudSettings: CloudSettings = {
   'core': {
@@ -30,6 +33,13 @@ const cloudSettings: CloudSettings = {
     }
   }
 };
+
+export function pushFactory(_notif:NotificationService, _push:Push, _platform:Platform):PushService {
+  if (_platform.is("cordova"))
+    return new AppPushService(_push,_notif);
+  else
+    return new WebPushService(_notif);
+}
 
 @NgModule({
   declarations: [
@@ -61,7 +71,12 @@ const cloudSettings: CloudSettings = {
   ],
   providers: [
     NotificationService,
-    SyncService
+    SyncService,
+    {
+      provide: PushService,
+      useFactory: pushFactory,
+      deps:[NotificationService,Push,Platform]
+    }
   ]
 })
 export class AppModule {}

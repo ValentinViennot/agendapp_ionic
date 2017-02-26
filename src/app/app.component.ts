@@ -4,7 +4,7 @@ import {StatusBar, Splashscreen} from "ionic-native";
 import {TabsPage} from "../pages/tabs/tabs";
 import {LoginPage} from "../pages/login/login";
 import {SyncService} from "../services/sync.service";
-import {NotificationService} from "../services/notification.service";
+import {PushService} from "../services/push.service";
 
 
 @Component({
@@ -17,7 +17,7 @@ export class MyApp {
   constructor(
     platform: Platform,
     _sync: SyncService,
-    _notif: NotificationService
+    _push: PushService
   ) {
     platform.ready().then(() => {
       if (!window.localStorage.getItem("token") || !window.localStorage.getItem("user"))
@@ -56,8 +56,7 @@ export class MyApp {
       } else {
         console.warn("Cordova is not available.");
       }
-      // Initialisation du service d'envoi de notifications push
-      _notif.initPush();
+      _push.initPush();
     });
   }
 }

@@ -1,6 +1,8 @@
 Comment déployer une nouvelle version Agendapp Ionic
 Nommage v.X.Y.Z
 
+/!\ Checker les commentaires TODO selon si compilation pour native app ou pour wep app
+
 - Nouvelle version X => Cas spécial
 
 - Nouvelle version Y

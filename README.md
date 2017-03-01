@@ -14,10 +14,34 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     
-    FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif/edit/master/LICENSE
+    FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif_app/edit/master/LICENSE
 
 
-VERSION APPLICATION WEB IONIC - 3.0.0
+VERSION APPLICATION WEB IONIC - 3.0.0-rc.2
+
+Comment démarrer depuis une copie de ce github ? 
+
+in agendacollaboratif_app folder.. run cmd :
+npm install -g cordova && npm install -g ionic
+ionic start agendapp GITHUBLINK/src --v2
+cd agendapp
+// copier le dossier resources depuis github
+// copier et remplacer les fichiers :
+// - bower.json
+// - .io-config.json
+// - config.xml
+// - ionic.config.json
+// - LICENSE
+// - package.json
+npm install && npm update
+ionic serve
+// Pour ajout de platformes
+// Installer le Android SDK
+ionic platform add android
+ionic resources & ionic resources
+ionic build android
+// Après connexion d'un appareil android en USB
+ionic run android
 
 Description
 

@@ -1,17 +1,19 @@
-Comment déployer une nouvelle version Agendapp Ionic
-Nommage v.X.Y.Z
+Comment d?ployer une nouvelle version Agendapp Ionic
+Nommage vX.Y.Z
 
-/!\ Checker les commentaires TODO selon si compilation pour native app ou pour wep app
+CTRL+MAJ+F => "vX.Y.Z" remplacer par "vX.Y.Z+1"
 
-- Nouvelle version X => Cas spécial
+/!\ Checker les commentaires
+
+- Nouvelle version X => Cas sp?cial
 
 - Nouvelle version Y
-* Remettre à zéro la liste de suppression des anciennes deploy dans app.component.ts
+* Remettre ? z?ro la liste de suppression des anciennes deploy dans app.component.ts
 * ionic upload --note "v.X.Y.Z" --deploy production
 * ionic package build android --profile prod --release --prod
 * ionic package download ID
-* Dans le code de app.component.ts, ajouter l'uuid de la deploy dans la liste des prochains ids à supprimer
+* Dans le code de app.component.ts, ajouter l'uuid de la deploy dans la liste des prochains ids ? supprimer
 
 - Nouvelle version Z
 * ionic upload --note "v.X.Y.Z" --deploy production
-* Dans le code de app.component.ts, ajouter l'uuid de la deploy dans la liste des prochains ids à supprimer
+* Dans le code de app.component.ts, ajouter l'uuid de la deploy dans la liste des prochains ids ? supprimer

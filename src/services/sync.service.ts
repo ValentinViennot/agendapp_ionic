@@ -17,7 +17,7 @@
 
  FULL LICENSE FILE : https://github.com/misterw97/agendacollaboratif/edit/master/LICENSE
  */
-import {Http, Headers} from "@angular/http";
+import {Http, Headers, RequestOptions} from "@angular/http";
 import "rxjs/add/operator/toPromise";
 import {Devoir} from "../concepts/devoir";
 import {User} from "../concepts/user";
@@ -32,7 +32,7 @@ export class SyncService {
 
     // urls des apis
     private urls:string[];
-    private headers = new Headers({'Content-Type': 'application/json'});
+    private headers: RequestOptions;
     private online:boolean;
     /** Peut on faire confiance à la valeur navigator.onLine ? */
     private trustonline:boolean;
@@ -40,7 +40,7 @@ export class SyncService {
     constructor(
       private http:Http
     ) {
-        this.initUrls();
+        this.login("");
         this.online=navigator.onLine;
         this.trustonline=true;
     }
@@ -77,15 +77,14 @@ export class SyncService {
         }
     }
 
-    // Ajout du token aux urls
-    public login(token:string):void {
-        this.initUrls();
-        for(let i:number=0;i<this.urls.length;i++)
-            if(this.urls[i].substr(-1)=="/")
-                this.urls[i]+="?token="+token;
-            else
-                this.urls[i]+="&token="+token;
+    // Ajout du token
+    public login(token: string): void {
+      this.initUrls();
+      let headers = new Headers({'Content-Type': 'application/json'});
+      headers.append('Authorization', token);
+      this.headers = new RequestOptions({headers: headers});
     }
+
     private initUrls():void {
         let base:string = "https://apis.agendapp.fr";
         this.urls = [];
@@ -99,10 +98,13 @@ export class SyncService {
         this.urls.push(base+"/groupes/"); // 7 groupes et matières
         this.urls.push(base+"/login/"); // 8 login
         this.urls.push(base+"/invitations/"); // 9 invitations
+        for (let i: number = 0; i < this.urls.length; i++)
+          // "nt" = "no token" : pour des raisons historiques et de compatibilité
+          this.urls[i] += "?nt";
     }
 
     public logout(every:boolean):void {
-        this.http.get(this.urls[0]+"&all="+(every?1:0))
+        this.http.get(this.urls[0]+"&all="+(every?1:0),this.headers)
             .toPromise()
             .then(
                 function () {
@@ -118,7 +120,7 @@ export class SyncService {
 
     public syncUser():Promise<any> {
         let th = this;
-        return this.http.get(this.urls[1])
+        return this.http.get(this.urls[1],this.headers)
             .toPromise()
             .then(
                 function (response):Promise<any> {
@@ -132,7 +134,7 @@ export class SyncService {
     }
 
     public saveUser(user:any):Promise<any> {
-        return this.http.post(
+        return this.http.put(
             this.urls[1],
             JSON.stringify(user),this.headers)
             .toPromise()
@@ -169,7 +171,7 @@ export class SyncService {
      * @return {Promise<Devoir[]>} Devoirs
      */
     public getDevoirs(type:string):Promise<Devoir[]> {
-        return this.http.get(this.urls[2]+"&"+type)
+        return this.http.get(this.urls[2]+"&"+type,this.headers)
             .toPromise()
             .then(
                 response => response.json() as Devoir[],
@@ -296,7 +298,7 @@ export class SyncService {
      * @return {Promise<String>} Concaténation (DELIMITER #) des versions des matières de l'utilisateur
      */
     public getVersion():Promise<string> {
-        return this.http.get(this.urls[4])
+        return this.http.get(this.urls[4],this.headers)
             .toPromise()
             .then(
                 response => response.json() as String,
@@ -307,7 +309,7 @@ export class SyncService {
     // 5 cdn
 
     public supprFile(file:PJ):Promise<any> {
-        return this.http.get(this.urls[5]+"&delete&id="+file.file)
+        return this.http.get(this.urls[5]+"&delete&id="+file.file,this.headers)
             .toPromise()
             .catch(erreur => this.handleError(erreur));
     }
@@ -315,7 +317,7 @@ export class SyncService {
     // 6 courses (groupes souscrits)
 
     public getCourses():Promise<Groupe[]> {
-        return this.http.get(this.urls[6])
+        return this.http.get(this.urls[6],this.headers)
             .toPromise()
             .then(
                 response => response.json() as Groupe[],
@@ -353,7 +355,7 @@ export class SyncService {
     // 7 groupes et matières
 
     public getGroups(id:number):Promise<Groupe[]> {
-        return this.http.get(this.urls[7]+"&id="+id)
+        return this.http.get(this.urls[7]+"&id="+id,this.headers)
             .toPromise()
             .then(
                 response => response.json() as Groupe[],
@@ -362,7 +364,7 @@ export class SyncService {
     }
 
     public newGroup(group:Groupe):Promise<any> {
-        return this.http.put(
+        return this.http.post(
             this.urls[7],
             JSON.stringify(group),this.headers)
             .toPromise()
@@ -386,7 +388,7 @@ export class SyncService {
     // 9 invitations
 
     public getInvitations():Promise<Invitation[]> {
-        return this.http.get(this.urls[9])
+        return this.http.get(this.urls[9],this.headers)
             .toPromise()
             .then(
                 response => response.json() as Invitation[],

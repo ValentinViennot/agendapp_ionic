@@ -49,7 +49,7 @@
       <span [innerHTML]="commentaire.texte"></span>
       <div class="files">
         <div *ngFor="let file of commentaire.pjs" class="file">
-          <a target="_blank" [href]="'http://agendapp.fr/apis/cdn/'+file.file" >
+          <a target="_blank" [href]="'https://apis.agendapp.fr/cdn/?get='+file.file+'&token='+window.localStorage.getItem('token')" >
             <span class="name">{{file.title}}</span>
             <span class="auteur">(@{{file.auteur}})</span>
           </a>

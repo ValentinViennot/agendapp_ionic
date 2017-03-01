@@ -117,7 +117,7 @@ export class AppPushService extends PushService {
     if (!isUndefined(this.push.token)&&this.push.token.token!=null)
       return Promise.resolve("I"+this.push.token.token);
     else
-      return Promise.resolve(null);
+      return Promise.resolve("");
   }
 
 }

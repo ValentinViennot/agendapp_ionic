@@ -25,3 +25,4 @@ www
 
 # misc
 *.log
+/.io-config.json

@@ -77,6 +77,10 @@ export class UserPage {
      * @param sync L'initialisation intervient elle après un enregistrement des données ?
      */
     private init(sync:boolean):void {
+      this.push = this._push.isActivated();
+      this._push.getPushToken().then(
+        (token) => this.push_value = token
+      );
       if (sync) this._notif.add(0,'Modifications enregistrées','');
       else console.log("init user");
       this._sync.syncUser().then(
@@ -92,10 +96,6 @@ export class UserPage {
      */
     private initForm():void {
       this.changed=false;
-      this.push=this._push.isActivated();
-      this._push.getPushToken().then(
-        (token)=>this.push_value=token
-      );
       this.user = this._parse.parse("user");
       this.userForm = this.formBuilder.group({
         'prenom': new FormControl(this.user.prenom, Validators.required),
@@ -115,7 +115,7 @@ export class UserPage {
     public save():void {
         if (this.userForm.value.mdp1==this.userForm.value.mdp2) {
           let infos:any = this.userForm.value;
-          infos.push=this.push_value; // TODO MAJ APi to handle push and CRON (lié à token + cascade)
+          infos.push = this.push_value;
           this._sync.saveUser(infos).then(
               result => this.init(true),
               erreur => this._notif.add(2,'Erreur',erreur)
@@ -142,7 +142,9 @@ export class UserPage {
         if (!this.push) this._notif.add(1,"Notifications Push","Le choix effectué n'est valable que pour cette session, sur cet appareil.");
         else this._notif.add(0,"Désactivation des notifications push...","");
         this._push.registerPush().then(
-          () => this.init(false)
+          (token) => this._sync.saveUser({"push": this._push.isActivated() ? token : ""}).then(
+            () => this.save()
+          ).catch(() => this._notif.add(0, "Pense à enregistrer tes modifications ! ;)", ""))
         ).catch(
           (erreur)=>this._notif.add(2,"Erreur",erreur)
         );

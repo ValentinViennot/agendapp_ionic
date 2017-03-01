@@ -54,7 +54,6 @@ export abstract class PushService {
   abstract getPushToken(): Promise<string>;
 
   public isActivated(): boolean {
-    console.log(this.activated);
     return this.activated;
   }
 

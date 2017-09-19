@@ -1,5 +1,6 @@
 # JetBrains
 .idea
+.sourcemaps
 
 # dependencies
 plugins
@@ -25,4 +26,7 @@ www
 
 # misc
 *.log
-/.io-config.json
+
+# others
+DEPLOYMENT.txt
+.io-config.json

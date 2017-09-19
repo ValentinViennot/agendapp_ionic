@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fr" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <title>AGENDAPP - l'Agenda Collaboratif</title>
@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="assets/icon/favicon.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#D32F2F">
-  
+
   <!-- cordova.js TODO comment for web app -->
   <script src="cordova.js"></script>
   <!-- TODO cut firebase-messaging-sw.js from assets to www root after build process for web app -->
@@ -39,8 +39,10 @@
 
   <!-- The polyfills js is generated during the build process -->
   <script src="build/polyfills.js"></script>
-
+  <!-- TODO update firebase version in package.json -->
+  <script src="build/vendor.js"></script>
   <!-- The bundle js is generated during the build process -->
   <script src="build/main.js"></script>
+
 </body>
 </html>

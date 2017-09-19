@@ -1,6 +1,8 @@
 import {Component} from "@angular/core";
 import {Platform} from "ionic-angular";
-import {StatusBar, Splashscreen} from "ionic-native";
+import {SplashScreen} from '@ionic-native/splash-screen';
+import {StatusBar} from '@ionic-native/status-bar';
+
 import {TabsPage} from "../pages/tabs/tabs";
 import {LoginPage} from "../pages/login/login";
 import {SyncService} from "../services/sync.service";
@@ -8,16 +10,19 @@ import {PushService} from "../services/push.service";
 
 
 @Component({
-  template: `<ion-nav [root]="rootPage"></ion-nav>`
+  template: `
+    <ion-nav [root]="rootPage"></ion-nav>`
 })
-export class MyApp {
+export class Agendapp {
 
-  rootPage:any;
+  rootPage: any;
 
   constructor(
-    platform: Platform,
-    _sync: SyncService,
-    _push: PushService
+              private platform: Platform,
+              private statusBar: StatusBar,
+              private splashScreen: SplashScreen,
+              _sync: SyncService,
+              _push: PushService
   ) {
     platform.ready().then(() => {
       if (!window.localStorage.getItem("token") || !window.localStorage.getItem("user"))
@@ -27,8 +32,8 @@ export class MyApp {
         this.rootPage = TabsPage;
       }
       if (platform.is('cordova')) {
-        StatusBar.styleDefault();
-        Splashscreen.hide();
+        this.statusBar.styleDefault();
+        this.splashScreen.hide();
         /*
         TODO réactiver après résolution du bug avec deploy et production...(penser à inclure deploy:Deploy dans le constructeur)
         //deploy.channel = "dev";
@@ -59,4 +64,5 @@ export class MyApp {
       _push.initPush();
     });
   }
+
 }
